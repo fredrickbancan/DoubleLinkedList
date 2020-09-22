@@ -4,6 +4,8 @@
 #define RAYGUI_SUPPORT_ICONS
 #include "raygui.h"
 
+#include "DoubleLinkedList.h"
+#include <iostream>
 int main(int argc, char* argv[])
 {
     // Initialization
@@ -13,7 +15,16 @@ int main(int argc, char* argv[])
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
-    SetTargetFPS(60);
+    DoubleLinkedList list = DoubleLinkedList();
+    list.pushBack(64);
+    list.pushBack(69);
+    list.pushBack(35);
+    list.pushBack(72);
+    list.printList();
+    list.pushFront(420);
+    list.printList();
+    list.insertAt(35, 1337, true);
+    list.printList();
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -30,7 +41,7 @@ int main(int argc, char* argv[])
 
         ClearBackground(RAYWHITE);
 
-        DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+        DrawText("Congrats! You created your first window!", 190, 200, 20, BLACK);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -40,6 +51,6 @@ int main(int argc, char* argv[])
     //--------------------------------------------------------------------------------------   
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
-
+    system("PAUSE");
     return 0;
 }
