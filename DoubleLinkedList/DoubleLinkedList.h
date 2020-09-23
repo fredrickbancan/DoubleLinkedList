@@ -37,10 +37,10 @@ public:
 	/*adds the provided value to the back of the list*/
 	void pushBack(int value);
 
-	/*returns and removes the value at the front of the list*/
+	/*returns and removes the value at the front of the list. If the list is empty, returns -1 instead*/
 	int popFront();
 
-	/*returns and removes the value at the back of the list*/
+	/*returns and removes the value at the back of the list, If the list is empty, returns -1 instead*/
 	int popBack();
 
 	/*returns the value at the front of the list*/

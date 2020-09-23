@@ -114,14 +114,14 @@ bool DoubleLinkedList::insertAt(int key, int value, bool before)
 {
 	if (isEmpty)
 	{
-		before ? pushBack(value) : pushFront(value);
+		before ? pushFront(value) : pushBack(value);
 		return false;
 	}
 
 	if (count == 1)
 	{
 		int originalData = head->data;
-		before ? pushBack(value) : pushFront(value);
+		before ? pushFront(value) : pushBack(value);
 		return originalData == key;
 	}
 	Node* newNode = new Node{ nullptr, nullptr, value };
@@ -137,11 +137,14 @@ bool DoubleLinkedList::insertAt(int key, int value, bool before)
 				if (itterator == head)
 				{
 					head->prev = newNode;
+					newNode->next = head;
 					head = newNode;
 				}
 				else
 				{
 					itterator->prev->next = newNode;
+					newNode->prev = itterator->prev;
+					newNode->next = itterator;
 					itterator->prev = newNode;
 				}
 			}
@@ -150,21 +153,24 @@ bool DoubleLinkedList::insertAt(int key, int value, bool before)
 				if (itterator == tail)
 				{
 					tail->next = newNode;
+					newNode->prev = tail;
 					tail = newNode;
 				}
 				else
 				{
 					itterator->next->prev = newNode;
+					newNode->next = itterator->next;
+					newNode->prev = itterator;
 					itterator->next = newNode;
 				}
 			}
 			count++;
 			return true;
 		}
-		itterator = itterator->next;
+		itterator = itterator->next;//itterate if not found
 	}
 
-	before ? pushBack(value) : pushFront(value);
+	before ? pushFront(value) : pushBack(value);//default to pushing front or back depending on before flag
 	return false;
 }
 
@@ -192,6 +198,79 @@ void DoubleLinkedList::pushBack(int value)
 	count++;
 }
 
+int DoubleLinkedList::popFront()
+{
+	if (isEmpty)
+	{
+		return -1;
+	}
+
+	int result = head->data;
+	Node* newHead = head->next;
+	head->next->prev = nullptr;
+	delete head;
+	head = newHead;
+	count--;
+	if (count < 1)
+	{
+		isEmpty = true;
+	}
+	return result;
+}
+
+int DoubleLinkedList::popBack()
+{
+	if (isEmpty)
+	{
+		return -1;
+	}
+
+	int result = tail->data;
+	Node* newTail = tail->prev;
+	tail->prev->next = nullptr;
+	delete tail;
+	tail = newTail;
+	count--;
+	if (count < 1)
+	{
+		isEmpty = true;
+	}
+	return result;
+}
+
+int DoubleLinkedList::getFront() const
+{
+	return head->data;
+}
+
+int DoubleLinkedList::getBack() const
+{
+	return tail->data;
+}
+
+int DoubleLinkedList::getCount() const
+{
+	return count;
+}
+
+int* DoubleLinkedList::toIntArray() const
+{
+	if (isEmpty)
+	{
+		return nullptr;
+	}
+
+	int* result = new int[count];
+
+	Node* itterator = head;
+	for (int i = 0; i < count; i++)
+	{
+		result[i] = itterator->data;
+		itterator = itterator->next;
+	}
+	return result;
+}
+
 void DoubleLinkedList::printList() const
 {
 	std::cout << "List count: " + std::to_string(count) << std::endl;
@@ -202,9 +281,28 @@ void DoubleLinkedList::printList() const
 	}
 
 	Node* itterator = head;
-	for (int i = 0; i < count; i++)//TODO: doesnt work, index out of bounds
+	for (int i = 0; i < count; i++)
 	{
 		std::cout << "Node value: " + std::to_string(itterator->data) << std::endl;
 		itterator = itterator->next;
 	}
+}
+
+bool DoubleLinkedList::contains(int key) const
+{
+	Node* itterator = head;
+	for (int i = 0; i < count; i++)
+	{
+		if (itterator->data == key)
+		{
+			return true;
+		}
+		itterator = itterator->next;
+	}
+	return false;
+}
+
+bool DoubleLinkedList::getIsEmpty() const
+{
+	return isEmpty;
 }

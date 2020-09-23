@@ -15,15 +15,10 @@ int main(int argc, char* argv[])
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
-    DoubleLinkedList list = DoubleLinkedList();
-    list.pushBack(64);
-    list.pushBack(69);
-    list.pushBack(35);
-    list.pushBack(72);
-    list.printList();
-    list.pushFront(420);
-    list.printList();
-    list.insertAt(35, 1337, true);
+    DoubleLinkedList list = DoubleLinkedList(10, 1);
+    list.insertAt(1, 35, true);
+    list.insertAt(35, 72, false);
+    list.insertAt(511, 69, false);
     list.printList();
     //--------------------------------------------------------------------------------------
 
