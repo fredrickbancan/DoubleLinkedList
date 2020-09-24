@@ -10,7 +10,6 @@ private:
 		Node* next = nullptr;
 		int data = 0;
 	};
-	Node* nodeArray = nullptr;
 	int count;
 	bool isEmpty = true;
 	Node* head = new Node{};
@@ -19,6 +18,9 @@ private:
 	/*returns true if a node with key value is found, and outputs that node ptr
 	  If no node is found, output node will be assigned nullptr*/
 	bool find(int key, Node*& foundNode);
+
+	/*Used for sorting, swaps the values of a and b*/
+	void swapValues(Node* a, Node* b);
 public:
 
 	/*initializes this list with the count provided, initializes all values to the startValue (defaults to 0)*/

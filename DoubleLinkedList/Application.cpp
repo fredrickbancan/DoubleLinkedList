@@ -19,6 +19,9 @@ int main(int argc, char* argv[])
     list.insertAt(1, 35, true);
     list.insertAt(35, 72, false);
     list.insertAt(511, 69, false);
+    list.insertAt(35, 420, true);
+    list.printList();
+    list.sort();
     list.printList();
     //--------------------------------------------------------------------------------------
 

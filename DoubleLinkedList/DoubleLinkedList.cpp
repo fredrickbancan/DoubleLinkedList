@@ -86,6 +86,13 @@ bool DoubleLinkedList::find(int key, Node*& foundNode)
 	return false;
 }
 
+void DoubleLinkedList::swapValues(Node* a, Node* b)
+{
+	int tempValue = a->data;
+	a->data = b->data;
+	b->data = tempValue;
+}
+
 void DoubleLinkedList::pushFront(int value)
 {
 	if (isEmpty)
@@ -251,6 +258,42 @@ int DoubleLinkedList::getBack() const
 int DoubleLinkedList::getCount() const
 {
 	return count;
+}
+
+void DoubleLinkedList::sort()
+{
+	if (isEmpty || count < 2)//no need to sort if theres less than 2 elements
+	{
+		return;
+	}
+
+	bool moreSortingNeeded = true;
+	bool passMadeChanges = false;
+
+	//bubble sort
+	
+	Node* left;
+	Node* right;
+
+	do
+	{
+		passMadeChanges = false;
+		Node* itterator = head;
+		for (int i = 0; i < count - 1; i++)
+		{
+			left = itterator;
+			right = itterator->next;
+
+			if (left->data > right->data)
+			{
+				swapValues(left, right);
+				passMadeChanges = true;
+			}
+			itterator = itterator->next;
+		}
+		moreSortingNeeded = passMadeChanges;
+	} 
+	while (moreSortingNeeded);
 }
 
 int* DoubleLinkedList::toIntArray() const
