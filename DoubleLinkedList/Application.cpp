@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
         ClearBackground(LIGHTGRAY);
 
         DrawText("Double Linked List", 325, 10, 20, BLACK);
+
         GuiButton(Rectangle{ 350, 340, 115, 20 }, "Add to Front of List");
         GuiButton(Rectangle{ 350, 360, 115, 20 }, "Add to Back of List");
         GuiButton(Rectangle{ 350, 380, 115, 20 }, "Insert after node");
