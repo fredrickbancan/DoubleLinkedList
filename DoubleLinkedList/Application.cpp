@@ -13,16 +13,7 @@ int main(int argc, char* argv[])
     int screenWidth = 800;
     int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
-
-    DoubleLinkedList list = DoubleLinkedList(10, 1);
-    list.insertAt(1, 35, true);
-    list.insertAt(35, 72, false);
-    list.insertAt(511, 69, false);
-    list.insertAt(35, 420, true);
-    list.printList();
-    list.sort();
-    list.printList();
+    InitWindow(screenWidth, screenHeight, "Fredrick - Double Linked List");
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -37,10 +28,15 @@ int main(int argc, char* argv[])
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-        ClearBackground(RAYWHITE);
+        ClearBackground(LIGHTGRAY);
 
-        DrawText("Congrats! You created your first window!", 190, 200, 20, BLACK);
-
+        DrawText("Double Linked List", 325, 10, 20, BLACK);
+        GuiButton(Rectangle{ 350, 340, 115, 20 }, "Add to Front of List");
+        GuiButton(Rectangle{ 350, 360, 115, 20 }, "Add to Back of List");
+        GuiButton(Rectangle{ 350, 380, 115, 20 }, "Insert after node");
+        GuiButton(Rectangle{ 350, 400, 115, 20 }, "Insert before node");
+        GuiButton(Rectangle{ 372, 420, 70, 20 }, "Sort List");
+        //TODO: draw list and impliment buttons
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
