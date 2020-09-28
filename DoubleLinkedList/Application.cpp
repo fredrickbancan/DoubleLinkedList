@@ -11,7 +11,7 @@
 
 /*Draws the provided array of ints representing a doubly linked list as nodes as gui buttons.
   Buttons are used so they can be selected for insertions.*/
-void drawDLLNodes(bool* nodeButtons, const int* intList, int count);
+void drawDLLNodes(bool* nodeButtons, const int* intList, int count);//TODO: demonstrate count, first, last and isEmpty graphically.
 
 int main(int argc, char* argv[])
 {
