@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     int screenHeight = 450;
 
     //initializing DLL to have just one node
-    DoubleLinkedList* theList= new DoubleLinkedList(53,1);
+    DoubleLinkedList* theList= new DoubleLinkedList(49,1);
 
     bool* nodeButtons = nullptr;
 
@@ -77,6 +77,10 @@ int main(int argc, char* argv[])
 
         drawDLLNodes(nodeButtons, listInts, theList->getCount());
 
+        DrawText((std::string("List Is Empty: ") + std::to_string(theList->getFront())).c_str(), 325, 10, 20, BLACK);//showing if list is empty
+        DrawText((std::string("First node value: ") + std::to_string(theList->getFront())).c_str(), 325, 10, 20, BLACK);//showing first value
+        DrawText((std::string("Last node value: ") + std::to_string(theList->getBack())).c_str(), 325, 10, 20, BLACK);//showing last value
+
         //TODO: draw list and impliment buttons
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -92,26 +96,24 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-float clamp(float in, float max)
-{
-    if (in >= max)
-    {
-        return max;
-    }
-    return in;
-}
-
-void drawDLLNodes(bool* nodeButtons, const int* intList, int count)//TODO: align center
+void drawDLLNodes(bool* nodeButtons, const int* intList, int count)//TODO: replace int array with itterator to properly demonstrate use of dll
 {
     static constexpr int maxNodesWide = 10;
+    static constexpr int nodeSize = 30;
+    static constexpr float nodeSpacing = 75.0F;
+    static constexpr float rowHeight = 50.0F;
+    static constexpr float center = 430.0F;
 
+    static constexpr float rowLeftStartingPos = (center - (maxNodesWide * nodeSpacing)) / 2; //float value of where to start placing nodes at each row from left.
+
+    float remainingNodesStartingPos = (center - ((count % maxNodesWide) * nodeSpacing)) / 2; //float value of where to start placing the last remaining nodes that are less than a row.
+    int filledRowNodes = (count / maxNodesWide) * maxNodesWide;//using int truncation we can get the number of nodes that fit into full rows
     for (int i = 0; i < count; i++)
     {
-        float nodeStartPosX = 430 - (((i % 10) * 75.0F)/ 2.0F );
-        float nodeX = nodeStartPosX;// +((i % 10) * 75.0F);
-        float nodeY = 50.0F + (i / 10) * 50.0F;
-        nodeButtons[i] = GuiButton(Rectangle{ nodeX, nodeY, 30, 30 }, std::to_string(intList[i]).c_str());//drawing each node as a button
-		//DrawLine(nodeX, 225, 0, 0, DARKGREEN);//drawing line to next node
-		//DrawLine(0, 0, 0, 0, RED);//drawing line to previous node
+        float nodeStartPosX = i < filledRowNodes ? rowLeftStartingPos : remainingNodesStartingPos;
+        float nodeX = nodeStartPosX + ((i % maxNodesWide) * nodeSpacing);
+        float nodeY = ((i / maxNodesWide) + 1) * rowHeight;
+        nodeButtons[i] = GuiButton(Rectangle{ nodeX, nodeY, nodeSize, nodeSize }, std::to_string(intList[i]).c_str());//drawing each node as a button
+		//TODO: draw next and prev lines here
     }
 }
