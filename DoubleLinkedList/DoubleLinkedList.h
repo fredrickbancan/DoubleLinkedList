@@ -1,15 +1,16 @@
 #pragma once
 
+struct Node
+{
+	Node* prev = nullptr;
+	Node* next = nullptr;
+	int data = 0;
+};
+
 /*A class for the abstraction of a double linked list (of ints, not templated).*/
 class DoubleLinkedList
 {
 private:
-	struct Node
-	{
-		Node* prev = nullptr;
-		Node* next = nullptr;
-		int data = 0;
-	};
 	int count;
 	bool isEmpty = true;
 	Node* head = new Node{};
@@ -65,6 +66,12 @@ public:
 
 	/*returns true if list contains node with provided key value*/
 	bool contains(int key) const;
+
+	/*returns pointer to head node of list, useful for itterating*/
+	Node* getHead() const { return head; }
+
+	/*returns pointer to tail node of list, useful for ittterating*/
+	Node* getTail() const { return tail; }
 
 	/*returns true if list does not contain any elements*/
 	bool getIsEmpty() const;

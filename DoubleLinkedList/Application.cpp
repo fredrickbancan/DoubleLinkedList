@@ -9,9 +9,10 @@
 #include <string>
 
 
-/*Draws the provided array of ints representing a doubly linked list as nodes as gui buttons.
-  Buttons are used so they can be selected for insertions.*/
-void drawDLLNodes(bool* nodeButtons, const int* intList, int count);//TODO: demonstrate count, first, last and isEmpty graphically.
+/*Draws the provided doubly linked list to the window as rows of nodes, in order.
+  Also draws connecting lines in between, Green lines to the next node and red lines 
+  to the previous node.*/
+void drawDLLNodes(bool* nodeButtons, const DoubleLinkedList* dll);
 
 int main(int argc, char* argv[])
 {
@@ -21,7 +22,7 @@ int main(int argc, char* argv[])
     int screenHeight = 450;
 
     //initializing DLL to have just one node
-    DoubleLinkedList* theList= new DoubleLinkedList();
+    DoubleLinkedList* theList= new DoubleLinkedList(3,7);
 
     bool* nodeButtons = nullptr;
 
@@ -35,14 +36,10 @@ int main(int argc, char* argv[])
     //will be true if int array representing nodes needs to be rebuilt
     bool listNeedsRefresh = false;
 
-    //int array representing nodes and node values in the dll
-    int* listInts = nullptr;
-
     InitWindow(screenWidth, screenHeight, "Fredrick - Double Linked List (Integers)");
     //--------------------------------------------------------------------------------------
 
     //initialize arrays
-    listInts = theList->toIntArray();
     nodeButtons = new bool[theList->getCount()]{ false };
 
     // Main game loop
@@ -57,12 +54,12 @@ int main(int argc, char* argv[])
         buttonInsertBeforeNodePressed = GuiButton(Rectangle{ 350, 400, 115, 20 }, "Insert before node");
         buttonSortPressed = GuiButton(Rectangle{ 372, 420, 70, 20 }, "Sort List");
 
+        //TODO: Impliment button functionality.
+
         //rebuild int array if needed
         if (listNeedsRefresh)
         {
             delete[] nodeButtons;
-            delete[] listInts;
-            listInts = theList->toIntArray();
             nodeButtons = new bool[theList->getCount()]{ false };
             listNeedsRefresh = false;
         }
@@ -75,11 +72,11 @@ int main(int argc, char* argv[])
 
         DrawText("Double Linked List", 325, 10, 20, BLACK);
 
-        drawDLLNodes(nodeButtons, listInts, theList->getCount());
+        drawDLLNodes(nodeButtons, theList);
 
-        DrawText((std::string("List Is Empty: ") + (theList->getIsEmpty() ? "True" : "False")).c_str(), 5, 380, 15, BLACK);//showing if list is empty
-        DrawText((std::string("First node value: ") + std::to_string(theList->getFront())).c_str(), 5, 400, 15, BLACK);//showing first value
-        DrawText((std::string("Last node value: ") + std::to_string(theList->getBack())).c_str(), 5, 420, 15, BLACK);//showing last value
+        DrawText((std::string("List Is Empty: ") + (theList->getIsEmpty() ? "True" : "False")).c_str(), 5, 370, 20, BLACK);//showing if list is empty
+        DrawText((std::string("First node value: ") + std::to_string(theList->getFront())).c_str(), 5, 400, 20, BLACK);//showing first value
+        DrawText((std::string("Last node value: ") + std::to_string(theList->getBack())).c_str(), 5, 430, 20, BLACK);//showing last value
 
         //TODO: draw list and impliment buttons
         EndDrawing();
@@ -88,7 +85,6 @@ int main(int argc, char* argv[])
 
     // De-Initialization
     //--------------------------------------------------------------------------------------   
-    delete listInts;
     delete theList;
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
@@ -96,7 +92,7 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void drawDLLNodes(bool* nodeButtons, const int* intList, int count)//TODO: replace int array with itterator to properly demonstrate use of dll
+void drawDLLNodes(bool* nodeButtons, const DoubleLinkedList* dll)
 {
     static constexpr int maxNodesWide = 10;
     static constexpr int nodeSize = 30;
@@ -106,6 +102,7 @@ void drawDLLNodes(bool* nodeButtons, const int* intList, int count)//TODO: repla
 
     static constexpr float rowLeftStartingPos = center - (maxNodesWide * nodeSpacing) / 2; //float value of where to start placing nodes at each row from left.
 
+    int count = dll->getCount();
     float remainingNodesStartingPos = center - ((count % maxNodesWide) * nodeSpacing) / 2; //float value of where to start placing the last remaining nodes that are less than a row.
     int filledRowNodes = (count / maxNodesWide) * maxNodesWide;//using int truncation we can get the number of nodes that fit into full rows
     
@@ -132,11 +129,13 @@ void drawDLLNodes(bool* nodeButtons, const int* intList, int count)//TODO: repla
         prevNodeY = nodeY;
     }
 
+    Node* itterator = dll->getHead();
     for (int i = 0; i < count; i++)//draw nodes
     {
         float nodeStartPosX = i < filledRowNodes ? rowLeftStartingPos : remainingNodesStartingPos;
         float nodeX = nodeStartPosX + ((i % maxNodesWide) * nodeSpacing);
         float nodeY = ((i / maxNodesWide) + 1) * rowHeight;
-        nodeButtons[i] = GuiButton(Rectangle{ nodeX, nodeY, nodeSize, nodeSize }, std::to_string(intList[i]).c_str());//drawing each node as a button
+        nodeButtons[i] = GuiButton(Rectangle{ nodeX, nodeY, nodeSize, nodeSize }, std::to_string(itterator->data).c_str());//drawing each node as a button
+        itterator = itterator->next;
     }
 }
