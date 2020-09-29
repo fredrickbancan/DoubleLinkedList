@@ -247,11 +247,19 @@ int DoubleLinkedList::popBack()
 
 int DoubleLinkedList::getFront() const
 {
+	if (isEmpty)
+	{
+		return 0;
+	}
 	return head->data;
 }
 
 int DoubleLinkedList::getBack() const
 {
+	if (isEmpty)
+	{
+		return 0;
+	}
 	return tail->data;
 }
 

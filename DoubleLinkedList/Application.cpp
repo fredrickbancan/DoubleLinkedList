@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     int screenHeight = 450;
 
     //initializing DLL to have just one node
-    DoubleLinkedList* theList= new DoubleLinkedList(49,1);
+    DoubleLinkedList* theList= new DoubleLinkedList();
 
     bool* nodeButtons = nullptr;
 
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     bool buttonSortPressed = false;
     
     //will be true if int array representing nodes needs to be rebuilt
-    bool listNeedsRefresh = true;
+    bool listNeedsRefresh = false;
 
     //int array representing nodes and node values in the dll
     int* listInts = nullptr;
@@ -77,9 +77,9 @@ int main(int argc, char* argv[])
 
         drawDLLNodes(nodeButtons, listInts, theList->getCount());
 
-        DrawText((std::string("List Is Empty: ") + std::to_string(theList->getFront())).c_str(), 325, 10, 20, BLACK);//showing if list is empty
-        DrawText((std::string("First node value: ") + std::to_string(theList->getFront())).c_str(), 325, 10, 20, BLACK);//showing first value
-        DrawText((std::string("Last node value: ") + std::to_string(theList->getBack())).c_str(), 325, 10, 20, BLACK);//showing last value
+        DrawText((std::string("List Is Empty: ") + (theList->getIsEmpty() ? "True" : "False")).c_str(), 5, 380, 15, BLACK);//showing if list is empty
+        DrawText((std::string("First node value: ") + std::to_string(theList->getFront())).c_str(), 5, 400, 15, BLACK);//showing first value
+        DrawText((std::string("Last node value: ") + std::to_string(theList->getBack())).c_str(), 5, 420, 15, BLACK);//showing last value
 
         //TODO: draw list and impliment buttons
         EndDrawing();
@@ -104,16 +104,39 @@ void drawDLLNodes(bool* nodeButtons, const int* intList, int count)//TODO: repla
     static constexpr float rowHeight = 50.0F;
     static constexpr float center = 430.0F;
 
-    static constexpr float rowLeftStartingPos = (center - (maxNodesWide * nodeSpacing)) / 2; //float value of where to start placing nodes at each row from left.
+    static constexpr float rowLeftStartingPos = center - (maxNodesWide * nodeSpacing) / 2; //float value of where to start placing nodes at each row from left.
 
-    float remainingNodesStartingPos = (center - ((count % maxNodesWide) * nodeSpacing)) / 2; //float value of where to start placing the last remaining nodes that are less than a row.
+    float remainingNodesStartingPos = center - ((count % maxNodesWide) * nodeSpacing) / 2; //float value of where to start placing the last remaining nodes that are less than a row.
     int filledRowNodes = (count / maxNodesWide) * maxNodesWide;//using int truncation we can get the number of nodes that fit into full rows
-    for (int i = 0; i < count; i++)
+    
+    float prevNodeX;
+    float prevNodeY;
+    
+    for (int i = 0; i < count; i++)//draw next and previous lines
+    {
+        float nodeStartPosX = i < filledRowNodes ? rowLeftStartingPos : remainingNodesStartingPos;
+        float nodeX = nodeStartPosX + ((i % maxNodesWide) * nodeSpacing);
+        float nodeY = ((i / maxNodesWide) + 1) * rowHeight;
+
+        float nextNodeStartPosX = (i + 1) < filledRowNodes ? rowLeftStartingPos : remainingNodesStartingPos;
+        float nextNodeX = nextNodeStartPosX + (((i + 1) % maxNodesWide) * nodeSpacing);
+        float nextNodeY = (((i + 1) / maxNodesWide) + 1) * rowHeight;
+
+        if (i < count - 1)
+            DrawLine(nodeX + nodeSize, nodeY + nodeSize / 4, nextNodeX, nextNodeY + nodeSize / 4, DARKGREEN);//line to next node
+
+        if (i > 0)
+            DrawLine(nodeX , nodeY + (nodeSize - nodeSize / 4), prevNodeX + nodeSize, prevNodeY + (nodeSize - nodeSize / 4), RED);//line to previous node
+
+        prevNodeX = nodeX;
+        prevNodeY = nodeY;
+    }
+
+    for (int i = 0; i < count; i++)//draw nodes
     {
         float nodeStartPosX = i < filledRowNodes ? rowLeftStartingPos : remainingNodesStartingPos;
         float nodeX = nodeStartPosX + ((i % maxNodesWide) * nodeSpacing);
         float nodeY = ((i / maxNodesWide) + 1) * rowHeight;
         nodeButtons[i] = GuiButton(Rectangle{ nodeX, nodeY, nodeSize, nodeSize }, std::to_string(intList[i]).c_str());//drawing each node as a button
-		//TODO: draw next and prev lines here
     }
 }
