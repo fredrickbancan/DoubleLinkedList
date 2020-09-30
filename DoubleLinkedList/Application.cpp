@@ -12,7 +12,10 @@
 /*Draws the provided doubly linked list to the window as rows of nodes, in order.
   Also draws connecting lines in between, Green lines to the next node and red lines 
   to the previous node.*/
-void drawDLLNodes(bool* nodeButtons, const DoubleLinkedList* dll);
+void drawDLLNodes(const DoubleLinkedList* dll);
+
+/*Toggles the provided boolean reference if the provided button bool is true.*/
+void toggleBooleanOnButtonPress(bool button, bool& booleanToToggle);
 
 int main(int argc, char* argv[])
 {
@@ -22,9 +25,8 @@ int main(int argc, char* argv[])
     int screenHeight = 450;
 
     //initializing DLL to have just one node
-    DoubleLinkedList* theList= new DoubleLinkedList(3,7);
+    DoubleLinkedList* theList= new DoubleLinkedList();
 
-    bool* nodeButtons = nullptr;
 
     //Booleans for detecting button presses
     bool buttonAddToFrontPressed = false;
@@ -33,14 +35,17 @@ int main(int argc, char* argv[])
     bool buttonInsertBeforeNodePressed = false;
     bool buttonSortPressed = false;
     
-    //will be true if int array representing nodes needs to be rebuilt
-    bool listNeedsRefresh = false;
+    //bool for detecting value box editing
+    bool valueBoxEditing0 = false;
+    bool valueBoxEditing1 = false;
+
+    //int for holding input values
+    int inputValue0 = 0;
+    int inputValue1 = 0;
 
     InitWindow(screenWidth, screenHeight, "Fredrick - Double Linked List (Integers)");
     //--------------------------------------------------------------------------------------
 
-    //initialize arrays
-    nodeButtons = new bool[theList->getCount()]{ false };
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -48,21 +53,12 @@ int main(int argc, char* argv[])
         // Update
 
         //Update button booleans
-        buttonAddToFrontPressed = GuiButton(Rectangle{ 350, 340, 115, 20 }, "Add to Front of List");
-        buttonAddToBackPressed= GuiButton(Rectangle{ 350, 360, 115, 20 }, "Add to Back of List");
-        buttonInsertAfterNodePressed = GuiButton(Rectangle{ 350, 380, 115, 20 }, "Insert after node");
-        buttonInsertBeforeNodePressed = GuiButton(Rectangle{ 350, 400, 115, 20 }, "Insert before node");
+        toggleBooleanOnButtonPress(GuiButton(Rectangle{ 350, 340, 115, 20 }, "Add to Front of List"), buttonAddToFrontPressed);
+        toggleBooleanOnButtonPress(GuiButton(Rectangle{ 350, 360, 115, 20 }, "Add to Back of List"), buttonAddToBackPressed);
+        toggleBooleanOnButtonPress(GuiButton(Rectangle{ 350, 380, 115, 20 }, "Insert after node"), buttonInsertAfterNodePressed);
+        toggleBooleanOnButtonPress(GuiButton(Rectangle{ 350, 400, 115, 20 }, "Insert before node"), buttonInsertBeforeNodePressed);
         buttonSortPressed = GuiButton(Rectangle{ 372, 420, 70, 20 }, "Sort List");
 
-        //TODO: Impliment button functionality.
-
-        //rebuild int array if needed
-        if (listNeedsRefresh)
-        {
-            delete[] nodeButtons;
-            nodeButtons = new bool[theList->getCount()]{ false };
-            listNeedsRefresh = false;
-        }
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -72,27 +68,121 @@ int main(int argc, char* argv[])
 
         DrawText("Double Linked List", 325, 10, 20, BLACK);
 
-        drawDLLNodes(nodeButtons, theList);
+        drawDLLNodes(theList);//draw nodes and lines
 
-        DrawText((std::string("List Is Empty: ") + (theList->getIsEmpty() ? "True" : "False")).c_str(), 5, 370, 20, BLACK);//showing if list is empty
+        //handling adding a node to front
+        if (buttonAddToFrontPressed)
+        {
+            toggleBooleanOnButtonPress(GuiValueBox(Rectangle{ 400, 225, 115, 20 }, "Input the value for the node.", &inputValue0, 0, INT32_MAX, valueBoxEditing0), valueBoxEditing0);
+            if (GuiButton(Rectangle{ 400, 245, 95, 30 }, "Add node"))
+            {
+                theList->pushFront(inputValue0);
+                valueBoxEditing0 = false;
+                inputValue0 = 0;
+                buttonAddToFrontPressed = false;
+            }
+            if (GuiButton(Rectangle{ 400, 275, 95, 30 }, "Cancel"))
+            {
+                valueBoxEditing0 = false;
+                inputValue0 = 0;
+                buttonAddToFrontPressed = false;
+            }
+        }
+
+        //handling adding a node to back
+        if (buttonAddToBackPressed)
+        {
+            toggleBooleanOnButtonPress(GuiValueBox(Rectangle{ 400, 225, 115, 20 }, "Input the value for the node.", &inputValue0, 0, INT32_MAX, valueBoxEditing0), valueBoxEditing0);
+            if (GuiButton(Rectangle{ 400, 245, 95, 30 }, "Add node"))
+            {
+                theList->pushBack(inputValue0);
+                valueBoxEditing0 = false;
+                inputValue0 = 0;
+                buttonAddToBackPressed = false;
+            }
+            if (GuiButton(Rectangle{ 400, 275, 95, 30 }, "Cancel"))
+            {
+                valueBoxEditing0 = false;
+                inputValue0 = 0;
+                buttonAddToBackPressed = false;
+            }
+        }
+
+        //handling inserting a node after
+        if (buttonInsertAfterNodePressed)
+        {
+            toggleBooleanOnButtonPress(GuiValueBox(Rectangle{ 400, 205, 115, 20 }, "Input the value of the node to insert after.", &inputValue0, 0, INT32_MAX, valueBoxEditing0), valueBoxEditing0);
+            toggleBooleanOnButtonPress(GuiValueBox(Rectangle{ 400, 225, 115, 20 }, "Input the value for the new node.", &inputValue1, 0, INT32_MAX, valueBoxEditing1), valueBoxEditing1);
+            if (GuiButton(Rectangle{ 400, 245, 95, 30 }, "Add node"))
+            {
+                theList->insertAt(inputValue0, inputValue1, false);
+                valueBoxEditing0 = false;
+                valueBoxEditing1 = false;
+                inputValue0 = 0;
+                inputValue1 = 0;
+                buttonInsertAfterNodePressed = false;
+            }
+            if (GuiButton(Rectangle{ 400, 275, 95, 30 }, "Cancel"))
+            {
+                valueBoxEditing0 = false;
+                valueBoxEditing1 = false;
+                inputValue0 = 0;
+                inputValue1 = 0;
+                buttonInsertAfterNodePressed = false;
+            }
+        }
+
+        //handling inserting a node before
+        if (buttonInsertBeforeNodePressed)
+        {
+            toggleBooleanOnButtonPress(GuiValueBox(Rectangle{ 400, 205, 115, 20 }, "Input the value of the node to insert before.", &inputValue0, 0, INT32_MAX, valueBoxEditing0), valueBoxEditing0);
+            toggleBooleanOnButtonPress(GuiValueBox(Rectangle{ 400, 225, 115, 20 }, "Input the value for the new node.", &inputValue1, 0, INT32_MAX, valueBoxEditing1), valueBoxEditing1);
+            if (GuiButton(Rectangle{ 400, 245, 95, 30 }, "Add node"))
+            {
+                theList->insertAt(inputValue0, inputValue1, true);
+                valueBoxEditing0 = false;
+                valueBoxEditing1 = false;
+                inputValue0 = 0;
+                inputValue1 = 0;
+                buttonInsertBeforeNodePressed = false;
+            }
+            if (GuiButton(Rectangle{ 400, 275, 95, 30 }, "Cancel"))
+            {
+                valueBoxEditing0 = false;
+                valueBoxEditing1 = false;
+                inputValue0 = 0;
+                inputValue1 = 0;
+                buttonInsertBeforeNodePressed = false;
+            }
+        }
+
+        //handling the sort button
+        if (buttonSortPressed)
+        {
+            theList->sort();
+        }
+
+        //drawing list info
+        DrawText((std::string("List Is Empty: ") + (theList->getIsEmpty() ? "True" : "False")).c_str(), 5, 340, 20, BLACK);//showing if list is empty
+        DrawText((std::string("List count: ") + std::to_string(theList->getCount())).c_str(), 5, 370, 20, BLACK);//showing count of list
         DrawText((std::string("First node value: ") + std::to_string(theList->getFront())).c_str(), 5, 400, 20, BLACK);//showing first value
         DrawText((std::string("Last node value: ") + std::to_string(theList->getBack())).c_str(), 5, 430, 20, BLACK);//showing last value
 
-        //TODO: draw list and impliment buttons
+        
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
 
     // De-Initialization
     //--------------------------------------------------------------------------------------   
-    delete theList;
+    delete theList;//delete list
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
    //  system("PAUSE");
     return 0;
 }
 
-void drawDLLNodes(bool* nodeButtons, const DoubleLinkedList* dll)
+void drawDLLNodes(const DoubleLinkedList* dll)
 {
     static constexpr int maxNodesWide = 10;
     static constexpr int nodeSize = 30;
@@ -111,10 +201,12 @@ void drawDLLNodes(bool* nodeButtons, const DoubleLinkedList* dll)
     
     for (int i = 0; i < count; i++)//draw next and previous lines
     {
+        //calculating position of current node on screen
         float nodeStartPosX = i < filledRowNodes ? rowLeftStartingPos : remainingNodesStartingPos;
         float nodeX = nodeStartPosX + ((i % maxNodesWide) * nodeSpacing);
         float nodeY = ((i / maxNodesWide) + 1) * rowHeight;
-
+        
+        //calculating position of previous node on screen
         float nextNodeStartPosX = (i + 1) < filledRowNodes ? rowLeftStartingPos : remainingNodesStartingPos;
         float nextNodeX = nextNodeStartPosX + (((i + 1) % maxNodesWide) * nodeSpacing);
         float nextNodeY = (((i + 1) / maxNodesWide) + 1) * rowHeight;
@@ -132,10 +224,22 @@ void drawDLLNodes(bool* nodeButtons, const DoubleLinkedList* dll)
     Node* itterator = dll->getHead();
     for (int i = 0; i < count; i++)//draw nodes
     {
+        //calculating position of current node on screen
         float nodeStartPosX = i < filledRowNodes ? rowLeftStartingPos : remainingNodesStartingPos;
         float nodeX = nodeStartPosX + ((i % maxNodesWide) * nodeSpacing);
         float nodeY = ((i / maxNodesWide) + 1) * rowHeight;
-        nodeButtons[i] = GuiButton(Rectangle{ nodeX, nodeY, nodeSize, nodeSize }, std::to_string(itterator->data).c_str());//drawing each node as a button
+
+        //drawing node as a button
+        GuiButton(Rectangle{ nodeX, nodeY, nodeSize, nodeSize }, std::to_string(itterator->data).c_str());//drawing each node as a button
+        
         itterator = itterator->next;
+    }
+}
+
+void toggleBooleanOnButtonPress(bool button, bool& booleanToToggle)
+{
+    if (button)
+    {
+        booleanToToggle = !booleanToToggle;
     }
 }
