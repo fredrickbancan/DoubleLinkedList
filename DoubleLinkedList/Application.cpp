@@ -7,7 +7,7 @@
 #include "DoubleLinkedList.h"
 #include <iostream>
 #include <string>
-
+#include <random>
 
 /*Draws the provided doubly linked list to the window as rows of nodes, in order.
   Also draws connecting lines in between, Green lines to the next node and red lines 
@@ -34,6 +34,8 @@ int main(int argc, char* argv[])
     bool buttonInsertAfterNodePressed = false;
     bool buttonInsertBeforeNodePressed = false;
     bool buttonSortPressed = false;
+    bool buttonRemovePressed = false;
+    bool buttonRandomizePressed = false;
     
     //bool for detecting value box editing
     bool valueBoxEditing0 = false;
@@ -57,6 +59,8 @@ int main(int argc, char* argv[])
         toggleBooleanOnButtonPress(GuiButton(Rectangle{ 350, 360, 115, 20 }, "Add to Back of List"), buttonAddToBackPressed);
         toggleBooleanOnButtonPress(GuiButton(Rectangle{ 350, 380, 115, 20 }, "Insert after node"), buttonInsertAfterNodePressed);
         toggleBooleanOnButtonPress(GuiButton(Rectangle{ 350, 400, 115, 20 }, "Insert before node"), buttonInsertBeforeNodePressed);
+        toggleBooleanOnButtonPress(GuiButton(Rectangle{ 465, 400, 115, 20 }, "Remove node"), buttonRemovePressed);
+        buttonRandomizePressed = GuiButton(Rectangle{ 465, 380, 115, 20 }, "Randomize list");
         buttonSortPressed = GuiButton(Rectangle{ 372, 420, 70, 20 }, "Sort List");
 
 
@@ -156,10 +160,43 @@ int main(int argc, char* argv[])
             }
         }
 
+        //handling remove node
+        if (buttonRemovePressed)
+        {
+            toggleBooleanOnButtonPress(GuiValueBox(Rectangle{ 400, 205, 115, 20 }, "Input the value of the node to remove.", &inputValue0, 0, INT32_MAX, valueBoxEditing0), valueBoxEditing0);
+            if (GuiButton(Rectangle{ 400, 245, 95, 30 }, "Remove node"))
+            {
+                theList->remove(inputValue0);
+                valueBoxEditing0 = false;
+                inputValue0 = 0;
+                buttonRemovePressed = false;
+            }
+            if (GuiButton(Rectangle{ 400, 275, 95, 30 }, "Cancel"))
+            {
+                valueBoxEditing0 = false;
+                inputValue0 = 0;
+                buttonRemovePressed = false;
+            }
+        }
         //handling the sort button
         if (buttonSortPressed)
         {
             theList->sort();
+        }
+
+        //handling randomizing the list
+        if (buttonRandomizePressed)
+        {
+            if (!theList->getIsEmpty())
+            {
+                delete theList;
+                theList = new DoubleLinkedList();
+            }
+
+            for (int i = 0; i < 20; i++)
+            {
+                theList->pushBack(rand() % 1000);
+            }
         }
 
         //drawing list info

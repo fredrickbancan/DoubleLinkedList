@@ -46,6 +46,9 @@ public:
 	/*returns and removes the value at the back of the list, If the list is empty, returns -1 instead*/
 	int popBack();
 
+	/*removes the first node containing the provided value*/
+	void remove(int value);
+
 	/*returns the value at the front of the list*/
 	int getFront() const;
 

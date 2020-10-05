@@ -213,15 +213,27 @@ int DoubleLinkedList::popFront()
 	}
 
 	int result = head->data;
+
+	if (count == 1)
+	{
+		count = 0;
+		head->next = tail;
+		tail->prev = head;
+		isEmpty = true;
+		return result;
+	}
+
+	if (count == 2)
+	{
+		count = 1;
+		head->data = tail->data;
+		return result;
+	}
 	Node* newHead = head->next;
 	head->next->prev = nullptr;
 	delete head;
 	head = newHead;
 	count--;
-	if (count < 1)
-	{
-		isEmpty = true;
-	}
 	return result;
 }
 
@@ -233,16 +245,61 @@ int DoubleLinkedList::popBack()
 	}
 
 	int result = tail->data;
+
+	if (count == 1)
+	{
+		count = 0;
+		head->next = tail;
+		tail->prev = head;
+		isEmpty = true;
+		return result;
+	}
+	if (count == 2)
+	{
+		count = 1;
+		tail->data = head->data;
+		return result;
+	}
 	Node* newTail = tail->prev;
 	tail->prev->next = nullptr;
 	delete tail;
 	tail = newTail;
 	count--;
-	if (count < 1)
-	{
-		isEmpty = true;
-	}
+
 	return result;
+}
+
+void DoubleLinkedList::remove(int value)
+{
+	Node* itterator = head;
+	for (int i = 0; i < count; i++)
+	{
+		if (itterator->data == value)
+		{
+			if (itterator == head)
+			{
+				std::cout << "pop front" << std::endl;
+				popFront();
+				return;
+			}
+			else if (itterator == tail)
+			{
+				std::cout << "pop back" << std::endl;
+				popBack();
+				return;
+			}
+			else
+			{
+				std::cout << "removing mid" << std::endl;
+				itterator->prev->next = itterator->next;
+				itterator->next->prev = itterator->prev;
+				count--;
+				delete itterator;
+				return;
+			}
+		}
+		itterator = itterator->next;
+	}
 }
 
 int DoubleLinkedList::getFront() const
